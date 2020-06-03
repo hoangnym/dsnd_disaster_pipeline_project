@@ -21,30 +21,27 @@ def load_data(messages_filepath, categories_filepath):
     categories = pd.read_csv(categories_filepath)
 
     # merging dataframes
-    df = pd.merge(messages, categories, how='inner', on='id')
+    df = pd.merge(messages, categories, how='inner', on='id').drop('id', axis=1)
 
     return df
-
-
+ 
 def clean_data(df):
-     """
-    Clean the dataframe
-    
+    """Clean the dataframe
     Input:
-        - df: uncleaned version of df
+        -df: uncleaned version of df
     Output:
-        - df: cleaned version of df
+        -df: cleaned version of df
     """
-
     # create a dataframe of the individual category columns
     categories = df['categories'].str.split(";", expand=True)
-
+    print(categories)
+    
     # select the first row of the categories dataframe
     row = categories.loc[1,:]
-
+    
     # use this row to extract a list of new column names for categories.
     category_colnames = list(row.apply(lambda x: x[:-2]))
-
+    
     # rename the columns of `categories`
     categories.columns = category_colnames
 
@@ -66,9 +63,18 @@ def clean_data(df):
 
     return df
 
-
 def save_data(df, database_filename):
-    pass  
+    """
+    Save dataframe in working directory.
+    
+    Input:
+        -df: cleaned version of df
+        -database_filename: name of database in sql format
+    Output:
+    -None
+    """
+    engine = create_engine('sqlite:///'+database_filename)
+    df.to_sql('messages', engine, index=False)
 
 
 def main():
@@ -79,6 +85,7 @@ def main():
         print('Loading data...\n    MESSAGES: {}\n    CATEGORIES: {}'
               .format(messages_filepath, categories_filepath))
         df = load_data(messages_filepath, categories_filepath)
+        print(df)
 
         print('Cleaning data...')
         df = clean_data(df)
