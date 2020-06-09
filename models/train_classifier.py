@@ -114,7 +114,6 @@ def save_model(model, model_filepath):
     Input - model and model_filepath
     Output - None, saves model in working directory
     '''
-    #pkl_filename = "models/pickle_model.pkl"  
     with open(model_filepath, 'wb') as file:  
         pickle.dump(model, file)
 
