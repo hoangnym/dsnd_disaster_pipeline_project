@@ -31,8 +31,8 @@ In this project, Udacity in collaboration with Figure Eight provides a data engi
     │   ├── classifier.pkl                   # Trained ML model from train_classifier script saved as pickle file
     │   └── train_classifier.py              # Train ML model script         
     ├── screenshots
-    │   ├── classifier.pkl                   # Trained ML model from train_classifier script saved as pickle file
-    │   └── train_classifier.py              # Train ML model script  
+    │   ├── homepage.png                     # Screenshot of homepage
+    │   └── sample_query.png                 # Screenshot of classified query (example)
     └── README.md
 
 <a name="instructions"></a>
