@@ -97,6 +97,7 @@ def evaluate_model(model, X_test, y_test, category_names):
     # output model test results
     y_pred = model.predict(X_test)
     y_test = y_test.values
+    print(classification_report(y_test, y_pred, target_names = category_names))
 
     for i in range(y_test.shape[1]):
          print('%30s accuracy : %.2f' %(category_names[i], accuracy_score(y_test[:,i], y_pred[:,i])))
