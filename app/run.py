@@ -12,6 +12,7 @@ from plotly.graph_objs import Bar
 import joblib
 from sqlalchemy import create_engine
 import sklearn
+from wordcloud import WordCloud
 
 
 app = Flask(__name__)
@@ -47,6 +48,10 @@ def index():
     # Show distribution of different category
     category_names = df.iloc[:,4:].columns
     category_boolean = (df.iloc[:,4:] != 0).sum().values
+
+    # Top seven categories count
+    top_category_counts = df.iloc[:,4:].sum().sort_values(ascending=False)[1:8]
+    top_category_names = list(top_category_counts.index)
     
     # create visuals
     graphs = [
@@ -86,6 +91,25 @@ def index():
                 'xaxis': {
                     'title': "Category",
                     'tickangle': 270
+                }
+            }
+        },
+        #Graph3
+        {
+            'data': [
+                Bar(
+                    x=top_category_names,
+                    y=top_category_counts
+                )
+            ],
+
+            'layout': {
+                'title': 'Top Seven Categories',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Categories"
                 }
             }
         }
