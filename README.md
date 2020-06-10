@@ -63,7 +63,7 @@ Added another line to README.md
 
 ### Screenshots:
 1. Homepage displaying meta data of classifications
-![Sample Input](screenshots/homepage.png)
+![Sample Input](screenshots/home.png)
 
 2. Example of classifying new message - typed in: We have a huge fire in the Western forest, those people need water, medical supply and food
 ![Sample Input](screenshots/sample_query.png)
