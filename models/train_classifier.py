@@ -20,6 +20,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.svm import LinearSVC
 import warnings
+import joblib
 warnings.filterwarnings("ignore")
 
 
@@ -71,22 +72,18 @@ def build_model():
     output - model_pipeline
     """
     # text processing and model pipeline
-    pipeline = Pipeline([   
-    ('text_pipeline', Pipeline([
-        ('vect', CountVectorizer(tokenizer=tokenize)),
-        ('tfidf', TfidfTransformer())
-    ])),
-    ('clf', MultiOutputClassifier(KNeighborsClassifier()))
-    ])
+    pipeline = Pipeline([('vect', CountVectorizer(tokenizer=tokenize)),
+                         ('tfidf', TfidfTransformer()),
+                         ('clf', MultiOutputClassifier(OneVsRestClassifier(LinearSVC())))
+                        ])
 
     # define parameters for GridSearchCV
-    parameters = {
-    'text_pipeline__tfidf__use_idf': (True, False),
-    'clf__estimator__weights': ['uniform', 'distance']
+    parameters = {'vect__ngram_range': ((1, 1), (1, 2)),
+                  'vect__max_df': (0.75, 1.0)
     }
 
     # create gridsearch object and return as final model pipeline
-    model_pipeline = GridSearchCV(pipeline, param_grid=parameters, verbose=5, cv=2)
+    model_pipeline = GridSearchCV(pipeline, param_grid=parameters, verbose=3, cv=3)
 
     return model_pipeline
 
@@ -114,8 +111,7 @@ def save_model(model, model_filepath):
     Input - model and model_filepath
     Output - None, saves model in working directory
     '''
-    with open(model_filepath, 'wb') as file:  
-        pickle.dump(model, file)
+    joblib.dump(model, model_filepath)
 
 
 def main():

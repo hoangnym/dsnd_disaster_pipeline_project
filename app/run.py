@@ -9,9 +9,9 @@ from nltk.tokenize import word_tokenize
 from flask import Flask
 from flask import render_template, request, jsonify
 from plotly.graph_objs import Bar
-#import sklearn.external.joblib as extjoblib
 import joblib
 from sqlalchemy import create_engine
+import sklearn
 
 
 app = Flask(__name__)
@@ -41,25 +41,14 @@ model = joblib.load("../models/classifier.pkl")
 def index():
     
     # extract data needed for visuals
-    # TODO: Below is an example - modify to extract data for your own visuals
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
 
+    # Show distribution of different category
     category_names = df.iloc[:,4:].columns
     category_boolean = (df.iloc[:,4:] != 0).sum().values
-
-    # Show distribution of different category
-    category_counts = []
-    for column_name in category_names:
-        category_counts.append(np.sum(df[column_name]))
-
-    # extract data exclude related
-    categories = df.iloc[:,4:]
-    categories_mean = categories.mean().sort_values(ascending=False)[1:11]
-    categories_names = list(categories_mean.index)
     
     # create visuals
-    # TODO: Below is an example - modify to create your own visuals
     graphs = [
         #Graph1
         {
@@ -99,26 +88,7 @@ def index():
                     'tickangle': 270
                 }
             }
-        },
-        #Graph3
-        {
-            'data': [
-                Bar(
-                    x=categories_names,
-                    y=categories_mean
-                )
-            ],
-
-            'layout': {
-                'title': 'Top 10 Message Categories',
-                'yaxis': {
-                    'title': "Percentage"
-                },
-                'xaxis': {
-                    'title': "Categories"
-                }
-            }
-        },
+        }
     ]
     
     # encode plotly graphs in JSON
@@ -133,11 +103,12 @@ def index():
 @app.route('/go')
 def go():
     # save user input in query
-    query = request.args.get('query', '') 
+    query = request.args.get('query', '')
 
     # use model to predict classification for query
     classification_labels = model.predict([query])[0]
     classification_results = dict(zip(df.columns[4:], classification_labels))
+    print(classification_results)
 
     # This will render the go.html Please see that file. 
     return render_template(
